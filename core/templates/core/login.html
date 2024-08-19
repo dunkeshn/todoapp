@@ -19,9 +19,7 @@
             </button>
         </div>
     </nav>
-
 </div>
-
 <body>
 <div class="container">
     <div class="row justify-content-center">
@@ -31,14 +29,12 @@
             </h1>
             <form method="POST">
                 {% csrf_token %}
-                <input name="login"
-                       type="text"
-                       class="form-control mb-2"
-                       placeholder="Логин">
-                <input name="password"
-                       type="password"
-                       class="form-control mb-3"
-                       placeholder="Пароль">
+                <div class="login mb-2">
+                    {{ form.username }}
+                </div>
+                <div class="password mb-3">
+                    {{ form.password }}
+                </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit"
                             class="btn btn-primary">

@@ -30,41 +30,38 @@
             </h1>
             <form method="POST">
                 {% csrf_token %}
-                <label class="fs-5 mb-2">Имя</label>
-                <input name="first_name"
-                       type="text"
-                       class="form-control mb-2"
-                       placeholder="Иван">
+                <label class="fs-5 mb-2">Имя *</label>
+                <div class="mb-2">
+                    {{ form.first_name }}
+                </div>
                 <label class="fs-5 mb-2">Фамилия</label>
-                <input name="second_name"
-                       type="text"
-                       class="form-control mb-2"
-                       placeholder="Иванов">
-                <label class="fs-5 mb-2">Электронная почта</label>
-                <input name="email"
-                       type="text"
-                       class="form-control mb-2"
-                       placeholder="name@example.com">
-                <label class="fs-5 mb-2">Никнейм</label>
-                <input name="nick"
-                       type="text"
-                       class="form-control mb-2"
-                       placeholder="name123">
+                <div class="mb-2">
+                    {{ form.last_name }}
+                </div>
+                <label class="fs-5 mb-2">Электронная почта *</label>
+                <div class="mb-2">
+                    {{ form.email }}
+                </div>
+                <label class="fs-5 mb-2">Никнейм *</label>
+                <div class="mb-2">
+                    {{ form.username }}
+                </div>
                 <label class="fs-5 mb-2">Дата рождения</label>
-                <input name="date_of_birth"
-                       type="date"
-                       class="form-control mb-2"
-                       placeholder="xx-xx-xxxx">
-                <label class="fs-5 mb-2">Пароль</label>
-                <input name="password"
-                       type="password"
-                       class="form-control mb-2"
-                       placeholder="Пароль из 8 символов">
-                <label class="fs-5 mb-2">Подтвердите пароль</label>
-                <input name="submit_password"
-                       type="password"
-                       class="form-control mb-4"
-                       placeholder="Пароль из 8 символов">
+                <div class="mb-2">
+                    {{ form.date_of_birth }}
+                </div>
+                <label class="fs-5 mb-2">Ваше изображение</label>
+                <div class="mb-2">
+                    {{ form.picture }}
+                </div>
+                <label class="fs-5 mb-2">Пароль *</label>
+                <div class="mb-2">
+                    {{ form.password }}
+                </div>
+                <label class="fs-5 mb-2">Подтвердите пароль *</label>
+                <div class="mb-3">
+                    {{ form.submit_password }}
+                </div>
                 <button type="submit"
                         class="btn btn-primary mb-5">
                     Зарегистрироваться

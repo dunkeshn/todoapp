@@ -1,4 +1,8 @@
+from django.conf.urls.static import static
 from django.urls import path
+
+from project import settings
+from project.settings import MEDIA_URL, MEDIA_ROOT
 from .views import *
 from rest_framework.routers import DefaultRouter
 from core import views
@@ -23,5 +27,7 @@ urlpatterns = [
     path('registration/', Registration.as_view(), name='registration'),
     path('logout/', Logout.as_view(), name='logout'),
     path('profile/', Profile.as_view(), name='profile'),
-
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT) # статические файлы и вот это все я не пон бля

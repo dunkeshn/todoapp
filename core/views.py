@@ -147,9 +147,9 @@ class Search(LoginRequiredMixin,
 
 
 class Login(FormView):
-    template_name = 'core/login_formi.html'
+    template_name = 'core/login.html'
     form_class = forms.LoginForm
-    success_url = 'tasks'
+    success_url = 'home'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -172,29 +172,7 @@ class Login(FormView):
                 return redirect('tasks')
             else:
                 return redirect('login')
-        return render(request, 'core/login_formi.html', {'form': form})
-
-    # template_name = 'core/login_formi.html'
-    # model = models.Users
-    #
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.user.is_authenticated:
-    #         return redirect('home')
-    #     return super().dispatch(request, *args, **kwargs)
-    #
-    # def post(self, request):
-    #     email = request.POST.get('login')
-    #     password = request.POST.get('password')
-    #
-    #     usr = authenticate(request,
-    #                        username=email,
-    #                        password=password)
-    #     if usr is not None:
-    #         login(request,
-    #               usr)
-    #         return redirect('tasks')
-    #     else:
-    #         return redirect('login')
+        return render(request, 'core/login.html', {'form': form})
 
 
 class Logout(TemplateView):
@@ -203,9 +181,10 @@ class Logout(TemplateView):
         return redirect('login')
 
 
-class Registration(TemplateView):
+class Registration(FormView):
     template_name = 'core/registration.html'
-    model = models.Users
+    form_class = forms.RegistrationForm
+    success_url = 'home'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -214,32 +193,37 @@ class Registration(TemplateView):
                                 *args,
                                 **kwargs)
 
+
     def post(self, request):
-        first_name = request.POST.get('first_name')
-        second_name = request.POST.get('second_name')
-        email = request.POST.get('email')
-        nick = request.POST.get('nick')
-        date_of_birth = request.POST.get('date_of_birth')
-        password = request.POST.get('password')
-        submit_password = request.POST.get('submit_password')
-        if password == submit_password:
+        form = forms.RegistrationForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
+            date_of_birth = form.cleaned_data['date_of_birth']
+            picture = form.cleaned_data['picture']
+            password = form.cleaned_data['password']
+            submit_password = form.cleaned_data['submit_password']
+            if password == submit_password:
+                Users.objects.create_user(username=username,
+                                          password=password,
+                                          first_name=first_name,
+                                          last_name=last_name,
+                                          picture=picture,
+                                          email=email,
+                                          date_of_birth=date_of_birth)
 
-            Users.objects.create_user(username=nick,
-                                      password=password,
-                                      first_name=first_name,
-                                      last_name=second_name,
-                                      email=email,
-                                      date_of_birth=date_of_birth)
-
-            usr = authenticate(request,
-                               username=email,
-                               password=password)
-            if usr is not None:
-                login(request,
-                      usr)
-                return redirect('tasks')
-            else:
-                return redirect('login')
+                usr = authenticate(request,
+                                   username=email,
+                                   password=password)
+                if usr is not None:
+                    login(request,
+                          usr)
+                    return redirect('tasks')
+                else:
+                    return redirect('login')
+        return render(request, 'core/registration.html', {'form': form})
 
 
 class Profile(TemplateView):
