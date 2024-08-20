@@ -40,8 +40,18 @@
             Дата рождения: {{ user.date_of_birth }}
         </div>
         <div class="user_about d-flex justify-content-center mt-4">
-            <input class="form-control" type="text" style="width: 35%; height: 50px;" value="{{ user.about }}" aria-label="readonly input example"
+            <input class="form-control" type="text" style="width: 35%; height: 50px;" value="{{ user.about }}"
+                   aria-label="readonly input example"
                    readonly>
+        </div>
+        <div class="user_stats d-flex justify-content-center mt-4">
+            <ul class="list-group list-group-horizontal">
+                <a href="#" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
+                <a href="{% url 'tasks' %}" class="list-group-item">Задачи: {{ tasksnotdone.count }}</a>
+                <a href="{% url 'tasks' %}" class="list-group-item">Выполненные задачи: {{ tasksdone.count }}</a>
+<!--                # Осталось только сделать друзей и добавление в друзья. Еще делегирование задач другим пользователям.-->
+<!--                удаление из друзей. вроде все. Еще забыли пароль-->
+            </ul>
         </div>
 
     </div>

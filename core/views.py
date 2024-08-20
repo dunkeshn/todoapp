@@ -32,6 +32,7 @@ class Tasks(LoginRequiredMixin,
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['username'] = self.request.user.username
+        context['creator'] = self.request.user
         context['tasks'] = models.Tasks.objects.filter(completed=False)
         context['tasksdone'] = models.Tasks.objects.filter(completed=True)
         return context
@@ -42,6 +43,8 @@ class AddingTask(View):
         title = request.POST['title']
         if title:
             task = models.Tasks(title=title)
+            task.save()
+            task.owners.add(self.request.user)
             task.save()
         return redirect('tasks')
 
@@ -146,7 +149,7 @@ class Search(LoginRequiredMixin,
         return context
 
 
-class Login(FormView):
+class Login(FormView):  # !!! Сделать через рендер и конекст уведомление о том что неправильный пароль логин
     template_name = 'core/login.html'
     form_class = forms.LoginForm
     success_url = 'home'
@@ -181,7 +184,7 @@ class Logout(TemplateView):
         return redirect('login')
 
 
-class Registration(FormView):
+class Registration(FormView):  # !!! Сделать через рендер и конекст уведомление о том что неправильные данные
     template_name = 'core/registration.html'
     form_class = forms.RegistrationForm
     success_url = 'home'
@@ -192,7 +195,6 @@ class Registration(FormView):
         return super().dispatch(request,
                                 *args,
                                 **kwargs)
-
 
     def post(self, request):
         form = forms.RegistrationForm(request.POST)
@@ -236,6 +238,36 @@ class Profile(TemplateView):
         context['username'] = self.request.user.username
         context['user'] = self.request.user
         context['tasks'] = models.Tasks.objects.all()
+        context['tasksnotdone'] = models.Tasks.objects.filter(completed=False)
+        context['tasksdone'] = models.Tasks.objects.filter(completed=True)
+        return context
+
+
+class FindingFriends(LoginRequiredMixin,
+                     TemplateView):
+    template_name = 'core/find_friends.html'
+    model = models.Users
+    context_object_name = 'find_friends'
+
+    # Тут спиздил из Search все.
+    # Нужно сделать поиск пользователей.
+    # Чтобы можно было кинуть заявку в друзья.
+    # Еще вкладку друзья в профиле, где их можно удалить.
+    # Еще добавить передачу задачи другу.
+    # И на последок забыли пароль.
+    # По идее это все
+    def get_filters(self):
+        return filters.Tasks(self.request.GET)
+
+    def get_queryset(self):
+        return self.get_filters().qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['username'] = self.request.user.username
+        context['tasks'] = self.get_queryset().filter(completed=False)
+        context['tasksdone'] = self.get_queryset().filter(completed=True)
+        context['filters'] = self.get_filters()
         return context
 
 

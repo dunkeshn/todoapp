@@ -34,8 +34,6 @@ class Tasks(models.Model):
 
 
 class Users(AbstractUser):
-
-
     first_name = models.CharField(max_length=100,
                                   verbose_name='Имя')
     last_name = models.CharField(max_length=100,
