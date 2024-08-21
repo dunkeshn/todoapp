@@ -27,7 +27,8 @@ urlpatterns = [
     path('registration/', Registration.as_view(), name='registration'),
     path('logout/', Logout.as_view(), name='logout'),
     path('profile/', Profile.as_view(), name='profile'),
+    path('find_friends/', FindingFriends.as_view(), name='find_friends'),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT) # статические файлы и вот это все я не пон бля
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

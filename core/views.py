@@ -257,7 +257,7 @@ class FindingFriends(LoginRequiredMixin,
     # И на последок забыли пароль.
     # По идее это все
     def get_filters(self):
-        return filters.Tasks(self.request.GET)
+        return filters.Users(self.request.GET)
 
     def get_queryset(self):
         return self.get_filters().qs
@@ -265,10 +265,15 @@ class FindingFriends(LoginRequiredMixin,
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['username'] = self.request.user.username
-        context['tasks'] = self.get_queryset().filter(completed=False)
-        context['tasksdone'] = self.get_queryset().filter(completed=True)
+        context['users'] = self.get_queryset().all()
         context['filters'] = self.get_filters()
         return context
+
+
+class AddingFriends(View):
+
+    # Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
+    # Уведомление вот это все еще сделать как та..
 
 
 class Calendar(LoginRequiredMixin,

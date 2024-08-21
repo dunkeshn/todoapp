@@ -69,3 +69,14 @@ class Users(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ['email']
+
+
+class FriendshipInvite(models.Model):
+    STATUS_CHOICES = (
+        (0, 'Pending'),
+        (1, 'Accepted'),
+        (2, 'Rejected'),
+    )
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+    sent_from = models.ForeignKey(Users, related_name='invites_sent', on_delete=models.CASCADE)
+    sent_to = models.ForeignKey(Users, related_name='invites_received', on_delete=models.CASCADE)

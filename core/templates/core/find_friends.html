@@ -7,113 +7,31 @@
         <a type="button" href="{% url 'tasks' %}" class="list-group-item list-group-item-action fs-5">Задачи</a>
         <a type="button" href="{% url 'calendar' %}" class="list-group-item list-group-item-action fs-5">Календарь</a>
         <a type="button" href="{% url 'pomodoro' %}" class="list-group-item list-group-item-action fs-5">Помодоро</a>
-        <a type="button" href="{% url 'search' %}" class="list-group-item list-group-item-action active fs-5">Поиск</a>
+        <a type="button" href="{% url 'search' %}" class="list-group-item list-group-item-action fs-5">Поиск</a>
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="col-md-10">
-    <div class="">
-        <div class="mb-3">
-            <form method="get">
-                {% csrf_token %}
-                {% bootstrap_form filters.form %}
-                <button type="submit" class="btn btn-primary">Поиск</button>
-            </form>
-        </div>
+    <div class="mb-3">
+        <form method="get">
+            {% csrf_token %}
+            {% bootstrap_form filters.form %}
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </form>
     </div>
-    {% for task in tasks %}
-    <div class="card text-center mt-3 mb-3">
-        <div class="card-header fw-bold">
-            {% if task.priority == 'COMMON' %}
-            <a href="{% url 'change_priority_search' task.id %}" class="text-decoration-none text-secondary">Обычный</a>
-            {% endif %}
-            {% if task.priority == 'LOW' %}
-            <a href="{% url 'change_priority_search' task.id %}" class="text-decoration-none text-info">Низкий</a>
-            {% endif %}
-            {% if task.priority == 'MEDIUM' %}
-            <a href="{% url 'change_priority_search' task.id %}" class="text-decoration-none text-warning">Средний</a>
-            {% endif %}
-            {% if task.priority == 'HIGH' %}
-            <a href="{% url 'change_priority_search' task.id %}" class="text-decoration-none text-danger">Высокий</a>
-            {% endif %}
-        </div>
-        <div class="card-body">
-            <a class="card-title fs-3 text-decoration-none">{{ task.title }}</a>
-            <p class="card-text">{{ task.description }}</p>
-            <div class="d-flex justify-content-center">
-                <a href="{% url 'complete_task_search' task.id %}" class="btn btn-primary">Выполнено</a>
-                <div class="dropdown ms-2">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        ...
-                    </a>
-
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" href="{% url 'edit_task' task.id %}">Редактировать</a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'delete_task_search' task.id %}">Удалить</a></li>
-                    </ul>
-                </div>
-
+    {% for user in users %}
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ user.picture.url }}" class="img-fluid rounded-start" alt="someone">
             </div>
-
-        </div>
-        <div class="card-footer text-body-secondary">
-            <div>
-                Создано: {{ task.created_at|date:"d/m/Y H:i" }}
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-    <p>
-        <a class="btn btn-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button"
-           aria-expanded="false"
-           aria-controls="collapseExample">
-            Выполненные задачи
-        </a>
-    </p>
-    {% for taskdone in tasksdone %}
-    <div class="collapse" id="collapseExample">
-        <div class="card text-center mt-3 mb-3">
-            <div class="card-header fw-bold">
-                {% if taskdone.priority == 'COMMON' %}
-                <a href="{% url 'change_priority_search' taskdone.id %}"
-                   class="text-decoration-none text-secondary">Обычный</a>
-                {% endif %}
-                {% if taskdone.priority == 'LOW' %}
-                <a href="{% url 'change_priority_search' taskdone.id %}" class="text-decoration-none text-info">Низкий</a>
-                {% endif %}
-                {% if taskdone.priority == 'MEDIUM' %}
-                <a href="{% url 'change_priority_search' taskdone.id %}" class="text-decoration-none text-warning">Средний</a>
-                {% endif %}
-                {% if taskdone.priority == 'HIGH' %}
-                <a href="{% url 'change_priority_search' taskdone.id %}" class="text-decoration-none text-danger">Высокий</a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <a class="card-title fs-3 text-decoration-none">{{ taskdone.title }}</a>
-                <p class="card-text">{{ taskdone.description }}</p>
-                <div class="d-flex justify-content-center">
-                    <a href="{% url 'complete_task_search' taskdone.id %}" class="btn btn-secondary">Задача не выполнена</a>
-                    <div class="dropdown ms-2">
-                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            ...
-                        </a>
-
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{% url 'edit_task' taskdone.id %}">Редактировать</a></li>
-                            <li><a class="dropdown-item text-danger"
-                                   href="{% url 'delete_task_search' taskdone.id %}">Удалить</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-            <div class="card-footer text-body-secondary">
-                <div>
-                    Создано: {{ taskdone.created_at|date:"d/m/Y H:i" }}
+            <div class="col-md-8">
+                <div class="card-body">
+                    <a href="#" class="card-title fs-4">{{ user.first_name }} {{ user.last_name }}</a>
+                    <p class="card-text">{{ user.username }}</p>
+                    <a href="#" type="button" class="btn btn-success mt-4">Добавить в друзья!</a>
                 </div>
             </div>
         </div>
