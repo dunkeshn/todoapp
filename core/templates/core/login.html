@@ -27,6 +27,13 @@
             <h1 class="fs-3 text-center mb-4">
                 Вход в <span class="text-primary fw-bolder">ToDoApp!</span>
             </h1>
+            <div class="notification">
+                {% if notification %}
+                <div class="alert alert-danger" role="alert">
+                    Неправильный логин или пароль!
+                </div>
+                {% endif %}
+            </div>
             <form method="POST">
                 {% csrf_token %}
                 <div class="login mb-2">

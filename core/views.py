@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -149,7 +151,7 @@ class Search(LoginRequiredMixin,
         return context
 
 
-class Login(FormView):  # !!! Сделать через рендер и конекст уведомление о том что неправильный пароль логин
+class Login(FormView):
     template_name = 'core/login.html'
     form_class = forms.LoginForm
     success_url = 'home'
@@ -174,7 +176,8 @@ class Login(FormView):  # !!! Сделать через рендер и коне
                       usr)
                 return redirect('tasks')
             else:
-                return redirect('login')
+                notification = True
+                return render(request, 'core/login.html', {'form': form, 'notification': notification})
         return render(request, 'core/login.html', {'form': form})
 
 
@@ -199,33 +202,32 @@ class Registration(FormView):  # !!! Сделать через рендер и �
     def post(self, request):
         form = forms.RegistrationForm(request.POST)
         if form.is_valid():
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            username = form.cleaned_data['username']
-            date_of_birth = form.cleaned_data['date_of_birth']
-            picture = form.cleaned_data['picture']
-            password = form.cleaned_data['password']
-            submit_password = form.cleaned_data['submit_password']
-            if password == submit_password:
-                Users.objects.create_user(username=username,
-                                          password=password,
-                                          first_name=first_name,
-                                          last_name=last_name,
-                                          picture=picture,
-                                          email=email,
-                                          date_of_birth=date_of_birth)
+            try:
 
-                usr = authenticate(request,
-                                   username=email,
-                                   password=password)
-                if usr is not None:
-                    login(request,
-                          usr)
-                    return redirect('tasks')
-                else:
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                email = form.cleaned_data['email']
+                username = form.cleaned_data['username']
+                date_of_birth = form.cleaned_data['date_of_birth']
+                picture = form.cleaned_data['picture']
+                password = form.cleaned_data['password']
+                submit_password = form.cleaned_data['submit_password']
+                if password == submit_password:
+                    Users.objects.create_user(username=username,
+                                              password=password,
+                                              first_name=first_name,
+                                              last_name=last_name,
+                                              picture=picture,
+                                              email=email,
+                                              date_of_birth=date_of_birth)
+
                     return redirect('login')
-        return render(request, 'core/registration.html', {'form': form})
+            except IntegrityError:
+                error = 'IntegrityError'
+                return render(request, 'core/registration.html', {'form': form, 'error': error})
+        else:
+            error = 'WrongEmail'
+            return render(request, 'core/registration.html', {'form': form, 'error': error})
 
 
 class Profile(TemplateView):
@@ -270,7 +272,7 @@ class FindingFriends(LoginRequiredMixin,
         return context
 
 
-class AddingFriends(View):
+# class AddingFriends(View):
 
     # Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
     # Уведомление вот это все еще сделать как та..

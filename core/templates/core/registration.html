@@ -28,6 +28,18 @@
             <h1 class="fs-3 text-center mb-4">
                 Регистрация в <span class="text-primary fw-bolder">ToDoApp!</span>
             </h1>
+            <div class="error">
+                {% if error == 'WrongEmail' %}
+                <div class="alert alert-danger" role="alert">
+                    Введена неверная почта!
+                </div>
+                {% endif %}
+                {% if error == 'IntegrityError' %}
+                <div class="alert alert-danger" role="alert">
+                    Логин или почта уже существуют!
+                </div>
+                {% endif %}
+            </div>
             <form method="POST">
                 {% csrf_token %}
                 <label class="fs-5 mb-2">Имя *</label>
