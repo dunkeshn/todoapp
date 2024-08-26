@@ -46,7 +46,7 @@
         </div>
         <div class="user_stats d-flex justify-content-center mt-4">
             <ul class="list-group list-group-horizontal">
-                <a href="{% url 'user_friends' %}" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
+                <a href="{% url 'user_friends' user.id %}" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
                 <a href="{% url 'tasks' %}" class="list-group-item">Задачи: {{ tasksnotdone.count }}</a>
                 <a href="{% url 'tasks' %}" class="list-group-item">Выполненные задачи: {{ tasksdone.count }}</a>
             </ul>

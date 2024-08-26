@@ -28,7 +28,8 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('profile/<int:user_id>', Profile.as_view(), name='profile'),
     path('find_friends/', FindingFriends.as_view(), name='find_friends'),
-    path('friends/', UserFriends.as_view(), name='user_friends'),
+    path('friends/<int:user_id>', UserFriends.as_view(), name='user_friends'),
+    path('add_friends/<int:user_id>', AddingFriends.as_view(), name='adding_friends'),
 ]
 
 if settings.DEBUG:

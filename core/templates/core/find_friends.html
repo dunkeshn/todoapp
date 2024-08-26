@@ -29,9 +29,13 @@
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <a href="#" class="card-title fs-4">{{ user.first_name }} {{ user.last_name }}</a>
+                    <a href="{% url 'profile' user.id %}" class="card-title fs-4">{{ user.first_name }} {{ user.last_name }}</a>
                     <p class="card-text">{{ user.username }}</p>
-                    <a href="#" type="button" class="btn btn-success mt-4">Добавить в друзья!</a>
+                    {% if user in invited_users %}
+                    <a href="" type="button" class="btn btn-secondary mt-4">Приглашение уже отправлено!</a>
+                    {% else %}
+                    <a href="{% url 'adding_friends' user.id %}" type="button" class="btn btn-success mt-4">Добавить в друзья!</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -272,27 +272,47 @@ class FindingFriends(LoginRequiredMixin,
         context = super().get_context_data()
         friends = self.request.user.friends.all()
         user_n_friends = models.Users.objects.filter(id=self.request.user.id) | friends
+        invited_users = models.FriendshipInvite.objects.filter(sent_from=self.request.user)
+        invited_users_ids = invited_users.values_list('sent_to', flat=True)
+        invited_users_qs = models.Users.objects.filter(id__in=invited_users_ids)
         context['authuser'] = self.request.user
         context['user'] = self.request.user
+        context['invited_users'] = invited_users_qs
         context['users'] = self.get_queryset().exclude(id__in=user_n_friends.values_list('id', flat=True))
         context['filters'] = self.get_filters()
         return context
 
 
-class UserFriends()
+class UserFriends(LoginRequiredMixin,
+                     TemplateView):
+    template_name = 'core/user_friends.html'
+    model = models.Users
+    context_object_name = 'user_friends'
 
-# class AddingFriends(View):
-#     template_name = 'core/user_friends.html'
-#     model = models.Users
-#     context_object_name = 'friends'
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data()
-#         context['user'] = self.request.user
-#         context['creator'] = self.request.user
-#         context['tasks'] = models.Tasks.objects.filter(completed=False)
-#         context['tasksdone'] = models.Tasks.objects.filter(completed=True)
-#         return context
+    def get_filters(self):
+        return filters.Users(self.request.GET)
+
+    def get_queryset(self):
+        return self.get_filters().qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        user_id = self.kwargs.get('user_id')
+        user = models.Users.objects.get(
+            id=user_id)
+        friends = user.friends.all()
+        context['authuser'] = self.request.user
+        context['user'] = user
+        context['users'] = self.get_queryset().filter(id__in=friends.values_list('id', flat=True))
+        context['filters'] = self.get_filters()
+        return context
+
+class AddingFriends(View):
+    def get(self, request, user_id):
+        user = models.Users.objects.get(id=user_id)
+        invite = models.FriendshipInvite(sent_to=user, sent_from=self.request.user)
+        invite.save()
+        return redirect('find_friends')
 # Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
 # Уведомление вот это все еще сделать как та..
 

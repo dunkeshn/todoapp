@@ -24,4 +24,4 @@ class Users(django_filters.FilterSet):
     class Meta:
         model = models.Users
         fields = ()
-        exclude = ('picture', 'about')
+        exclude = ('picture', 'about',)
