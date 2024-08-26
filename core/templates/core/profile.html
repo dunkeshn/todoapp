@@ -31,7 +31,7 @@
             </p>
         </div>
         <div class="username text-dark badge bg-primary text-wrap text-white">
-            @{{ username }}
+            @{{ user.username }}
         </div>
         <div class="user_email text-secondary mt-3">
             {{ user.email }}
@@ -46,11 +46,9 @@
         </div>
         <div class="user_stats d-flex justify-content-center mt-4">
             <ul class="list-group list-group-horizontal">
-                <a href="#" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
+                <a href="{% url 'user_friends' %}" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
                 <a href="{% url 'tasks' %}" class="list-group-item">Задачи: {{ tasksnotdone.count }}</a>
                 <a href="{% url 'tasks' %}" class="list-group-item">Выполненные задачи: {{ tasksdone.count }}</a>
-<!--                # Осталось только сделать друзей и добавление в друзья. Еще делегирование задач другим пользователям.-->
-<!--                удаление из друзей. вроде все. Еще забыли пароль-->
             </ul>
         </div>
 

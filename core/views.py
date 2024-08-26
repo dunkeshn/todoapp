@@ -21,7 +21,8 @@ class Welcome(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
         return context
 
 
@@ -33,10 +34,10 @@ class Tasks(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
-        context['creator'] = self.request.user
-        context['tasks'] = models.Tasks.objects.filter(completed=False)
-        context['tasksdone'] = models.Tasks.objects.filter(completed=True)
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
+        context['tasks'] = models.Tasks.objects.filter(owners=self.request.user, completed=False)
+        context['tasksdone'] = models.Tasks.objects.filter(owners=self.request.user, completed=True)
         return context
 
 
@@ -85,7 +86,7 @@ class EditingTask(LoginRequiredMixin,
     def get(self, request, task_id):
         task = models.Tasks.objects.get(id=task_id)
         users = task.owners.all()
-        context = {'task': task, 'users': users}
+        context = {'task': task, 'users': users, 'authuser': self.request.user}
         return render(request,
                       'core/edit_task.html',
                       context)
@@ -144,9 +145,10 @@ class Search(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
-        context['tasks'] = self.get_queryset().filter(completed=False)
-        context['tasksdone'] = self.get_queryset().filter(completed=True)
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
+        context['tasks'] = self.get_queryset().filter(owners=self.request.user, completed=False)
+        context['tasksdone'] = self.get_queryset().filter(owners=self.request.user, completed=True)
         context['filters'] = self.get_filters()
         return context
 
@@ -187,7 +189,7 @@ class Logout(TemplateView):
         return redirect('login')
 
 
-class Registration(FormView):  # !!! Сделать через рендер и конекст уведомление о том что неправильные данные
+class Registration(FormView):
     template_name = 'core/registration.html'
     form_class = forms.RegistrationForm
     success_url = 'home'
@@ -230,18 +232,20 @@ class Registration(FormView):  # !!! Сделать через рендер и �
             return render(request, 'core/registration.html', {'form': form, 'error': error})
 
 
-class Profile(TemplateView):
+class Profile(LoginRequiredMixin, TemplateView):
     template_name = 'core/profile.html'
     model = models.Users
-    context_object_name = 'tasks'
+    context_object_name = 'profile'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
-        context['user'] = self.request.user
-        context['tasks'] = models.Tasks.objects.all()
-        context['tasksnotdone'] = models.Tasks.objects.filter(completed=False)
-        context['tasksdone'] = models.Tasks.objects.filter(completed=True)
+        user_id = self.kwargs.get('user_id')
+        user = models.Users.objects.get(
+            id=user_id)
+        context['authuser'] = self.request.user
+        context['user'] = user
+        context['tasksnotdone'] = models.Tasks.objects.filter(owners=user, completed=False)
+        context['tasksdone'] = models.Tasks.objects.filter(owners=user, completed=True)
         return context
 
 
@@ -266,16 +270,31 @@ class FindingFriends(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
-        context['users'] = self.get_queryset().all()
+        friends = self.request.user.friends.all()
+        user_n_friends = models.Users.objects.filter(id=self.request.user.id) | friends
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
+        context['users'] = self.get_queryset().exclude(id__in=user_n_friends.values_list('id', flat=True))
         context['filters'] = self.get_filters()
         return context
 
 
-# class AddingFriends(View):
+class UserFriends()
 
-    # Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
-    # Уведомление вот это все еще сделать как та..
+# class AddingFriends(View):
+#     template_name = 'core/user_friends.html'
+#     model = models.Users
+#     context_object_name = 'friends'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data()
+#         context['user'] = self.request.user
+#         context['creator'] = self.request.user
+#         context['tasks'] = models.Tasks.objects.filter(completed=False)
+#         context['tasksdone'] = models.Tasks.objects.filter(completed=True)
+#         return context
+# Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
+# Уведомление вот это все еще сделать как та..
 
 
 class Calendar(LoginRequiredMixin,
@@ -285,7 +304,8 @@ class Calendar(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
         return context
 
 
@@ -296,5 +316,6 @@ class Pomodoro(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['username'] = self.request.user.username
+        context['authuser'] = self.request.user
+        context['user'] = self.request.user
         return context

@@ -55,7 +55,7 @@
                         Передать задачу друзьям
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        {% for friend in creator.friends.all %}
+                        {% for friend in user.friends.all %}
                         <li><a class="dropdown-item" href="#">{{ friend.username }}</a></li>
                         {% endfor %}
                     </ul>
@@ -129,7 +129,13 @@
                                    href="{% url 'delete_task' taskdone.id %}">Удалить</a></li>
                         </ul>
                     </div>
-
+                </div>
+                <div class="owners d-flex justify-content-center mt-3">
+                    {% for owner in taskdone.owners.all %}
+                    <div class="username text-dark badge bg-primary text-wrap text-white me-1">
+                        @{{ owner.username }}
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             <div class="card-footer text-body-secondary">
