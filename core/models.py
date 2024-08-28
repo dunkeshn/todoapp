@@ -74,3 +74,11 @@ class Users(AbstractUser):
 class FriendshipInvite(models.Model):
     sent_from = models.ForeignKey(Users, related_name='invites_sent', on_delete=models.CASCADE)
     sent_to = models.ForeignKey(Users, related_name='invites_received', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Приглашение в друзья от {self.sent_from} к {self.sent_to}'
+
+    class Meta:
+        verbose_name = 'Приглашение в друзья'
+        verbose_name_plural = 'Приглашения в друзья'
+        ordering = ['sent_from']

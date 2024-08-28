@@ -34,6 +34,7 @@ class Tasks(LoginRequiredMixin,
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
+        # friends_to_give = self.request.user.
         context['authuser'] = self.request.user
         context['user'] = self.request.user
         context['tasks'] = models.Tasks.objects.filter(owners=self.request.user, completed=False)
@@ -307,6 +308,28 @@ class UserFriends(LoginRequiredMixin,
         context['filters'] = self.get_filters()
         return context
 
+
+class UserInvites(LoginRequiredMixin,
+                     TemplateView):
+    template_name = 'core/friends_invite.html'
+    model = models.Users
+    context_object_name = 'user_invites'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        user_id = self.kwargs.get('user_id')
+        user = models.Users.objects.get(
+            id=user_id)
+        invites_to_user = models.FriendshipInvite.objects.filter(sent_to=user)
+        invites_to_user_ids = invites_to_user.values_list('sent_from', flat=True)
+        invites_to_user_qs = models.Users.objects.filter(id__in=invites_to_user_ids)
+        context['authuser'] = self.request.user
+        context['user'] = user
+        context['inviting_users'] = invites_to_user_qs
+        context['invites_to_user'] = invites_to_user
+        return context
+
+
 class AddingFriends(View):
     def get(self, request, user_id):
         user = models.Users.objects.get(id=user_id)
@@ -316,6 +339,33 @@ class AddingFriends(View):
 # Как то сделать отправку запроса в друзья. Как то сделать чтобы вышел запрос у чела. Он подтверждает. Тогда уже они становятся друзьями
 # Уведомление вот это все еще сделать как та..
 
+
+class AcceptingFriend(View):
+    def get(self, request, inviting_user_id):
+        user = self.request.user
+        inviting_user = models.Users.objects.get(id=inviting_user_id)
+        user.friends.add(inviting_user)
+        inviting_user.friends.add(user)
+        invite_to_delete = models.FriendshipInvite.objects.filter(sent_to=user)
+        print(invite_to_delete)
+        invite_to_delete.delete()
+        return redirect('profile', user.id)
+
+
+class DeletingFriend(View):
+    def get(self, request, deleting_user_id):
+        user = self.request.user
+        deleting_user = models.Users.objects.get(id=deleting_user_id)
+        user.friends.remove(deleting_user)
+        deleting_user.friends.remove(user)
+        return redirect('profile', user.id)
+
+class GivingTask(View):
+    def get(self, request, task_id, friend_id):
+        friend = models.Users.objects.get(id=friend_id)
+        task = models.Tasks.objects.get(id=task_id)
+        task.owners.add(friend)
+        return redirect('tasks')
 
 class Calendar(LoginRequiredMixin,
                TemplateView):

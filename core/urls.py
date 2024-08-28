@@ -30,6 +30,10 @@ urlpatterns = [
     path('find_friends/', FindingFriends.as_view(), name='find_friends'),
     path('friends/<int:user_id>', UserFriends.as_view(), name='user_friends'),
     path('add_friends/<int:user_id>', AddingFriends.as_view(), name='adding_friends'),
+    path('invite_to_user/<int:user_id>', UserInvites.as_view(), name='user_invites'),
+    path('accept_friend/<int:inviting_user_id>', AcceptingFriend.as_view(), name='accept_friend'),
+    path('delete_friend/<int:deleting_user_id>', DeletingFriend.as_view(), name='delete_friend'),
+    path('give_task/<int:task_id>/<int:friend_id>', GivingTask.as_view(), name='give_task'),
 ]
 
 if settings.DEBUG:
