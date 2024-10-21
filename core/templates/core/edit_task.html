@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block sidebar %}
+<div class="col-md-2">
+    <div class="list-group">
+        <a type="button" href="{% url 'tasks' %}" class="list-group-item list-group-item-action fs-5">Задачи</a>
+        <a type="button" href="{% url 'calendar' %}" class="list-group-item list-group-item-action fs-5">Календарь</a>
+        <a type="button" href="{% url 'pomodoro' %}" class="list-group-item list-group-item-action fs-5">Помодоро</a>
+        <a type="button" href="{% url 'search' %}" class="list-group-item list-group-item-action fs-5">Поиск</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-10">
+    <form action="{% url 'update_task' task.id %}" method="POST">
+        {% csrf_token %}
+        <p class="fs-1">{{ task.title }}</p>
+        <textarea class="form-control mb-2 fs-5" name="description" placeholder="Подробнее ..."
+                  style="width: 70%; height: 80% ">{{ task.description }}</textarea>
+        {% for user in users %}
+        <div>
+            <p class="fs-3">Доступ к задаче имеют:</p>
+            <p class="fs-6 text-secondary">{{ user }}</p>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-1">Сохранить изменения</button>
+    </form>
+</div>
+{% endblock %}

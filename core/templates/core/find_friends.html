@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block sidebar %}
+<div class="col-md-2">
+    <div class="list-group">
+        <a type="button" href="{% url 'tasks' %}" class="list-group-item list-group-item-action fs-5">Задачи</a>
+        <a type="button" href="{% url 'calendar' %}" class="list-group-item list-group-item-action fs-5">Календарь</a>
+        <a type="button" href="{% url 'pomodoro' %}" class="list-group-item list-group-item-action fs-5">Помодоро</a>
+        <a type="button" href="{% url 'search' %}" class="list-group-item list-group-item-action fs-5">Поиск</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-10">
+    <div class="mb-3">
+        <form method="get">
+            {% csrf_token %}
+            {% bootstrap_form filters.form %}
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </form>
+    </div>
+    {% for user in users %}
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ user.picture.url }}" class="img-fluid rounded-start" alt="someone">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <a href="{% url 'profile' user.id %}" class="card-title fs-4">{{ user.first_name }} {{ user.last_name }}</a>
+                    <p class="card-text">{{ user.username }}</p>
+                    {% if user in invited_users %}
+                    <a href="" type="button" class="btn btn-secondary mt-4">Приглашение уже отправлено!</a>
+                    {% else %}
+                    <a href="{% url 'adding_friends' user.id %}" type="button" class="btn btn-success mt-4">Добавить в друзья!</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

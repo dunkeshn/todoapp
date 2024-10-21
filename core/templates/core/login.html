@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Вход</title>
+</head>
+
+<div class="bg-dark-subtle">
+    <nav class="pt-3 pb-4 navbar navbar-expand-lg bg-dark-subtle">
+        <div class="container-fluid ms-5">
+            <a class="navbar-brand text-primary fw-bolder" href="{% url 'home' %}">ToDoApp!</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+</div>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="mt-5" style="width: 35%">
+            <h1 class="fs-3 text-center mb-4">
+                Вход в <span class="text-primary fw-bolder">ToDoApp!</span>
+            </h1>
+            <div class="notification">
+                {% if notification %}
+                <div class="alert alert-danger" role="alert">
+                    Неправильный логин или пароль!
+                </div>
+                {% endif %}
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="login mb-2">
+                    {{ form.username }}
+                </div>
+                <div class="password mb-3">
+                    {{ form.password }}
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Войти
+                    </button>
+                    <a type="button" class="btn btn-dark ms-2" href="{% url 'registration' %}">
+                        Зарегистрироваться
+                    </a>
+                    <a type="button" class="btn btn-secondary ms-2" href="{% url 'registration' %}">
+                        Забыли пароль?
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+</html>

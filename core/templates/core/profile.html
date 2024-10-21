@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block sidebar %}
+<div class="col-md-2">
+    <div class="list-group">
+        <a type="button" href="{% url 'tasks' %}" class="list-group-item list-group-item-action fs-5">Задачи</a>
+        <a type="button" href="{% url 'calendar' %}" class="list-group-item list-group-item-action fs-5">Календарь</a>
+        <a type="button" href="{% url 'pomodoro' %}" class="list-group-item list-group-item-action fs-5">Помодоро</a>
+        <a type="button" href="{% url 'search' %}" class="list-group-item list-group-item-action fs-5">Поиск</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-10">
+    <div class="justify-content-center mt-3 text-center">
+        <div class="user_picture">
+            <img src="{{ user.picture.url }}"
+                 class="rounded mx-auto d-block img-fluid"
+                 style="height: 200px; width: 200px; object-fit: cover;
+"
+                 alt="You">
+        </div>
+        <div class="user_name mt-4 fs-2 fw-bold text-muted lh-1">
+            <p>
+                {{ user.first_name }}
+            </p>
+            <p>
+                {{ user.last_name }}
+            </p>
+        </div>
+        <div class="username text-dark badge bg-primary text-wrap text-white">
+            @{{ user.username }}
+        </div>
+        <div class="user_email text-secondary mt-3">
+            {{ user.email }}
+        </div>
+        <div class="user_birth mt-2">
+            Дата рождения: {{ user.date_of_birth }}
+        </div>
+        <div class="user_about d-flex justify-content-center mt-4">
+            <input class="form-control" type="text" style="width: 35%; height: 50px;" value="{{ user.about }}"
+                   aria-label="readonly input example"
+                   readonly>
+        </div>
+        <div class="user_stats d-flex justify-content-center mt-4">
+            <ul class="list-group list-group-horizontal">
+                <a href="{% url 'user_friends' user.id %}" class="list-group-item">Друзья: {{ user.friends.all.count }}</a>
+                <a href="{% url 'tasks' %}" class="list-group-item">Задачи: {{ tasksnotdone.count }}</a>
+                <a href="{% url 'tasks' %}" class="list-group-item">Выполненные задачи: {{ tasksdone.count }}</a>
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
